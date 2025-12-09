@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IIMANDRE | Livellando la Realtà</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700;900&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            orbitron: ['Orbitron', 'sans-serif'],
+          },
+          colors: {
+            neonPurple: '#a855f7',
+            neonCyan: '#06b6d4',
+            deepDark: '#050505',
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'spin-slow': 'spin 8s linear infinite',
+            'reverse-spin': 'spin 8s linear infinite reverse',
+            'shimmer': 'shimmer 2s linear infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-20px)' },
+            },
+            shimmer: {
+              '0%': { transform: 'translateX(-100%)' },
+              '100%': { transform: 'translateX(200%)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #050505;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #000;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1f1f1f;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a855f7;
+    }
+
+    /* CYBERPUNK CROSSHAIR CURSOR */
+    * {
+      cursor: none !important;
+    }
+
+    .cursor-core {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+      transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1),
+        width 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+        height 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+        border-radius 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .cursor-core.hovering {
+      width: 50px;
+      height: 50px;
+      background: transparent;
+      border: 2px solid #fff;
+      mix-blend-mode: difference;
+    }
+
+    .cursor-core.clicking {
+      transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    .cursor-aura {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease;
+    }
+
+    .cursor-aura.hovering {
+      opacity: 0;
+    }
+
+    /* Crosshair lines */
+    .cursor-line {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99997;
+      background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6), transparent);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .cursor-line-h {
+      width: 60px;
+      height: 1px;
+      transform: translate(-50%, -50%);
+    }
+
+    .cursor-line-v {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(180deg, transparent, rgba(6, 182, 212, 0.6), transparent);
+      transform: translate(-50%, -50%);
+    }
+
+    .cursor-line.hovering {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+    }
+
+    /* Corner brackets on hover */
+    .cursor-bracket {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+      z-index: 99996;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .cursor-bracket::before,
+    .cursor-bracket::after {
+      content: '';
+      position: absolute;
+      background: #a855f7;
+      box-shadow: 0 0 8px #a855f7;
+    }
+
+    .cursor-bracket-tl::before {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+    }
+
+    .cursor-bracket-tl::after {
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 100%;
+    }
+
+    .cursor-bracket-tr::before {
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 2px;
+    }
+
+    .cursor-bracket-tr::after {
+      top: 0;
+      right: 0;
+      width: 2px;
+      height: 100%;
+    }
+
+    .cursor-bracket-bl::before {
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+    }
+
+    .cursor-bracket-bl::after {
+      bottom: 0;
+      left: 0;
+      width: 2px;
+      height: 100%;
+    }
+
+    .cursor-bracket-br::before {
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 2px;
+    }
+
+    .cursor-bracket-br::after {
+      bottom: 0;
+      right: 0;
+      width: 2px;
+      height: 100%;
+    }
+
+    .cursor-bracket.visible {
+      opacity: 1;
+    }
+
+    /* Glow effect on click */
+    .cursor-ripple {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #06b6d4;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99995;
+      transform: translate(-50%, -50%) scale(0);
+      animation: ripple-expand 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    @keyframes ripple-expand {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+      }
+    }
+
+    /* CYBER TITLE EFFECT */
+    .cyber-glitch-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .cyber-title {
+      position: relative;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      z-index: 10;
+      /* Text gradient effect */
+      background: linear-gradient(180deg, #fff 0%, #e2e8f0 50%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.6));
+    }
+
+    /* RGB Split Layers */
+    .cyber-title::before,
+    .cyber-title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #050505;
+      z-index: -1;
+      opacity: 0.8;
+    }
+
+    .cyber-title::before {
+      color: #06b6d4;
+      z-index: -1;
+      animation: glitch-cyan 3s infinite;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: #06b6d4;
+    }
+
+    .cyber-title::after {
+      color: #a855f7;
+      z-index: -2;
+      animation: glitch-purple 2.5s infinite;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: #a855f7;
+    }
+
+    @keyframes glitch-cyan {
+      0% {
+        transform: translate(0);
+        clip-path: inset(0 0 0 0);
+      }
+
+      2% {
+        transform: translate(-2px, 2px);
+        clip-path: inset(10% 0 60% 0);
+      }
+
+      4% {
+        transform: translate(2px, -2px);
+        clip-path: inset(40% 0 10% 0);
+      }
+
+      6% {
+        transform: translate(0);
+        clip-path: inset(0 0 0 0);
+      }
+
+      100% {
+        transform: translate(0);
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    @keyframes glitch-purple {
+      0% {
+        transform: translate(0);
+        clip-path: inset(0 0 0 0);
+      }
+
+      2% {
+        transform: translate(2px, 2px);
+        clip-path: inset(30% 0 20% 0);
+      }
+
+      4% {
+        transform: translate(-2px, -2px);
+        clip-path: inset(10% 0 80% 0);
+      }
+
+      6% {
+        transform: translate(0);
+        clip-path: inset(0 0 0 0);
+      }
+
+      100% {
+        transform: translate(0);
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    /* Scanline Overlay on Text */
+    .scanline-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.5) 51%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 20;
+      mix-blend-mode: overlay;
+    }
+  </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- Cyberpunk Crosshair Cursor -->
+  <div class="cursor-core" id="cursorCore"></div>
+  <div class="cursor-aura" id="cursorAura"></div>
+  <div class="cursor-line cursor-line-h" id="cursorLineH"></div>
+  <div class="cursor-line cursor-line-v" id="cursorLineV"></div>
+  <div class="cursor-bracket cursor-bracket-tl" id="bracketTL"></div>
+  <div class="cursor-bracket cursor-bracket-tr" id="bracketTR"></div>
+  <div class="cursor-bracket cursor-bracket-bl" id="bracketBL"></div>
+  <div class="cursor-bracket cursor-bracket-br" id="bracketBR"></div>
+
+  <script>
+    // Cyberpunk Crosshair Cursor
+    const cursorCore = document.getElementById('cursorCore');
+    const cursorAura = document.getElementById('cursorAura');
+    const cursorLineH = document.getElementById('cursorLineH');
+    const cursorLineV = document.getElementById('cursorLineV');
+    const brackets = [
+      document.getElementById('bracketTL'),
+      document.getElementById('bracketTR'),
+      document.getElementById('bracketBL'),
+      document.getElementById('bracketBR')
+    ];
+
+    let mouseX = 0, mouseY = 0;
+    let auraX = 0, auraY = 0;
+    let isHovering = false;
+    let currentTarget = null;
+
+    // Track mouse position
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      // Immediately update core and lines
+      cursorCore.style.left = mouseX + 'px';
+      cursorCore.style.top = mouseY + 'px';
+      cursorLineH.style.left = mouseX + 'px';
+      cursorLineH.style.top = mouseY + 'px';
+      cursorLineV.style.left = mouseX + 'px';
+      cursorLineV.style.top = mouseY + 'px';
+
+      // Update brackets position if hovering
+      if (isHovering && currentTarget) {
+        updateBrackets(currentTarget);
+      }
+    });
+
+    // Smooth aura follow
+    function animateAura() {
+      const speed = 0.12;
+      auraX += (mouseX - auraX) * speed;
+      auraY += (mouseY - auraY) * speed;
+
+      cursorAura.style.left = auraX + 'px';
+      cursorAura.style.top = auraY + 'px';
+
+      requestAnimationFrame(animateAura);
+    }
+    animateAura();
+
+    // Update bracket positions around target element
+    function updateBrackets(target) {
+      const rect = target.getBoundingClientRect();
+      const padding = 8;
+
+      brackets[0].style.left = (rect.left - padding) + 'px';
+      brackets[0].style.top = (rect.top - padding) + 'px';
+
+      brackets[1].style.left = (rect.right + padding - 12) + 'px';
+      brackets[1].style.top = (rect.top - padding) + 'px';
+
+      brackets[2].style.left = (rect.left - padding) + 'px';
+      brackets[2].style.top = (rect.bottom + padding - 12) + 'px';
+
+      brackets[3].style.left = (rect.right + padding - 12) + 'px';
+      brackets[3].style.top = (rect.bottom + padding - 12) + 'px';
+    }
+
+    // Interactive elements
+    const interactiveSelectors = 'a, button, [role="button"], input, textarea, select, [onclick], .glass-card';
+
+    document.addEventListener('mouseover', (e) => {
+      const target = e.target.closest(interactiveSelectors);
+      if (target) {
+        isHovering = true;
+        currentTarget = target;
+
+        cursorCore.classList.add('hovering');
+        cursorAura.classList.add('hovering');
+        cursorLineH.classList.add('hovering');
+        cursorLineV.classList.add('hovering');
+
+        updateBrackets(target);
+        brackets.forEach(b => b.classList.add('visible'));
+      }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+      const target = e.target.closest(interactiveSelectors);
+      if (target) {
+        isHovering = false;
+        currentTarget = null;
+
+        cursorCore.classList.remove('hovering');
+        cursorAura.classList.remove('hovering');
+        cursorLineH.classList.remove('hovering');
+        cursorLineV.classList.remove('hovering');
+
+        brackets.forEach(b => b.classList.remove('visible'));
+      }
+    });
+
+    // Hide cursor when leaving window
+    const allCursorElements = [cursorCore, cursorAura, cursorLineH, cursorLineV, ...brackets];
+
+    document.addEventListener('mouseleave', () => {
+      allCursorElements.forEach(el => el.style.opacity = '0');
+    });
+
+    document.addEventListener('mouseenter', () => {
+      allCursorElements.forEach(el => el.style.opacity = '');
+    });
+
+    // Click ripple effect
+    document.addEventListener('mousedown', (e) => {
+      cursorCore.classList.add('clicking');
+
+      // Create ripple
+      const ripple = document.createElement('div');
+      ripple.className = 'cursor-ripple';
+      ripple.style.left = e.clientX + 'px';
+      ripple.style.top = e.clientY + 'px';
+      document.body.appendChild(ripple);
+
+      setTimeout(() => ripple.remove(), 600);
+    });
+
+    document.addEventListener('mouseup', () => {
+      cursorCore.classList.remove('clicking');
+    });
+  </script>
+
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
